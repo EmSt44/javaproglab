@@ -92,20 +92,17 @@ public class IntHandler {
           
             total += numbers[i];
 
-            for (int j = 0; j < numbers.length; j++) {
+            boolean isUnique = true; // Initialiseras som true
 
-                if (j == numbers.length - 1) {
-                    singles += 1;
+            for (int j = 0; j < numbers.length; j++) {
+                
+                if (numbers[i] == numbers[j] && i != j) {
+                    isUnique = false;
                 }
-                else if (i == j) {
-                    // Gör inget talet jämförs med sig självt.
-                }
-                else if (numbers[i] == numbers[j]) {
-                    break;
-                }
-                else {
-                    // Gör inget fortsätt loopen.
-                }
+            }
+
+            if (isUnique) {
+                singles += 1;
             }
         }
 
