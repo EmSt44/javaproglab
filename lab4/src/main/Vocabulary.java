@@ -46,7 +46,7 @@ public class Vocabulary {
             System.out.print(firstLanguageWord + " : ");
             String userInput = input.nextLine();
 
-            if (userInput == "q" || userInput == "Q") { // If the user enters "q" or "Q" the program should be aborted.
+            if (userInput.equals("q") || userInput.equals("Q")) { // If the user enters "q" or "Q" the program should be aborted.
                 System.out.println("Programmet avbröts");
                 break;
             }
