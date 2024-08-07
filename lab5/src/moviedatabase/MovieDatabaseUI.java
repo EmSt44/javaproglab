@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class MovieDatabaseUI {
 	private Scanner _scanner;
-	private File file = new File("/home/emil/Desktop/javaproglab/lab5/src/moviedatabase/movies.txt"); // The file where movies are stored, change to match location in your system.
+	private File file = new File("files/movies.txt"); // The file where movies are stored, change to match location in your system.
 	private FileWriter _fileWriter;
 	private Scanner _fileScanner;
 	/**
