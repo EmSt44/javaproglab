@@ -25,7 +25,7 @@ public class Vocabulary {
         String language = "Engelska";
 
         // The file to be used for the words, change the filepath to the correct one for your system.
-        String filePath = "/home/emil/Desktop/javaproglab/lab4/src/main/words.txt";
+        String filePath = "files/words.txt";
 
         File file = new File(filePath);
 
@@ -51,7 +51,7 @@ public class Vocabulary {
                 break;
             }
 
-            Integer lowestDifferenceInChars = null;
+            int lowestDifferenceInChars = -1; // Initialized to -1 since an initial value lower than 0 guarantees a correct value to be entered on the first loop iteration.
             String bestMatchWord = null;
             String secondLanguageWord;
             while ((secondLanguageWord = br.readLine()) != null) {
@@ -59,7 +59,7 @@ public class Vocabulary {
                     break;
                 }
                 int incorrectAmount = compareWords(secondLanguageWord, userInput);
-                if (lowestDifferenceInChars == null || lowestDifferenceInChars > incorrectAmount) {
+                if (lowestDifferenceInChars < 0 || lowestDifferenceInChars > incorrectAmount) {
                     lowestDifferenceInChars = incorrectAmount;
                     bestMatchWord = secondLanguageWord;
                 }
