@@ -1,23 +1,20 @@
 package moviedatabase;
 
 import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ListIterator;
+
 /**
  * A command line user interface for a movie database.
  */
 public class MovieDatabaseUI {
 	private Scanner _scanner;
-	private File file = new File("files/movies.txt"); // The file where movies are stored, change to match location in your system.
-	private FileWriter _fileWriter;
-	private Scanner _fileScanner;
+	private MovieDatabaseFileHandler _fileHandler;
+	
 	/**
 	 * Construct a MovieDatabaseUI.
 	 */
 	public MovieDatabaseUI() {
-		
+		_fileHandler = new MovieDatabaseFileHandler();
 	}
 	/**
 	 * Start the movie database UI.
@@ -44,7 +41,7 @@ public class MovieDatabaseUI {
 		_scanner.close();
 	} 
 
-	/**
+	 /**
 	 * Get input and translate it to a valid number.
 	 * 
 	 * @param scanner the Scanner we use to get input 
@@ -71,62 +68,38 @@ public class MovieDatabaseUI {
 		}			
 		return input;
 	}
+
 	/**
 	 * Get search string from user, search title in the movie 
 	 * database and present the search result.
 	 */
 	private void searchTitel() {
-		System.out.print("Enter key word: ");
-		String title = _scanner.nextLine().trim();
-
-		try {
-			_fileScanner = new Scanner(file);
-		} catch (FileNotFoundException e) {
-			System.out.println("Error finding the file");
-			e.printStackTrace();
+		boolean correctInput = false;
+		String title = null;
+		while (correctInput == false) {
+			System.out.print("Enter key word: ");
+			title = _scanner.nextLine().trim();
+			correctInput = MovieDatabaseInputValidation.sanitizeInput(title);
 		}
 
-		while (_fileScanner.hasNextLine()) {
-			String line = _fileScanner.nextLine();
-			String[] parts = line.split(",");
-			String currentTitle = parts[0];
-			String currentScore = parts[1];
-			if(currentTitle.toLowerCase().contains(title.toLowerCase())) {
-				System.out.println(currentTitle + ", Review score: " + currentScore + "/5");
-			}
+		ListIterator<MovieDatabaseMovie> iterator = _fileHandler.searchTitle(title).listIterator(0);
+		while (iterator.hasNext()) {
+			MovieDatabaseMovie movie = iterator.next();
+			System.out.println(movie.title + ", review score: " + movie.score + "/5");
 		}
-
-		// Close scanner to avoid issues with open reader and writer at the same time
-		_fileScanner.close();
-				
 	}
 	/**
 	 * Get search string from user, search review score in the movie 
 	 * database and present the search result.
 	 */
 	private void searchReviewScore() {		
-		int review = getNumberInput(_scanner, 1, 5, "Enter minimum review score (1 - 5): ");
+		int review = getNumberInput(_scanner, 1, 5, "Enter minumum review score (1 - 5): ");
 
-		try {
-			_fileScanner = new Scanner(file);
-		} catch (FileNotFoundException e) {
-			System.out.println("Error finding the file");
-			e.printStackTrace();
+		ListIterator<MovieDatabaseMovie> iterator = _fileHandler.searchReviewScore(review).listIterator(0);
+		while (iterator.hasNext()) {
+			MovieDatabaseMovie movie = iterator.next();
+			System.out.println(movie.title + ", review score: " + movie.score + "/5");
 		}
-
-		while (_fileScanner.hasNextLine()) {
-			String line = _fileScanner.nextLine();
-			String[] parts = line.split(",");
-			String currentTitle = parts[0];
-			String currentScore = parts[1];
-			int scoreAsInteger = Integer.parseInt(currentScore);
-			if(scoreAsInteger >= review) {
-				System.out.println(currentTitle + ", Review score: " + currentScore + "/5");
-			}
-		}
-
-		// close scanner to avoid issues with open reader and open writer at the same time
-		_fileScanner.close();
 		
 	}	
 	/**
@@ -134,31 +107,16 @@ public class MovieDatabaseUI {
 	 * it to the database.
 	 */
 	private void addMovie() {
-		System.out.print("Title: ");
-		String title = _scanner.nextLine().trim();
+		boolean correctInput = false;
+		String title = null;
+		while (correctInput == false) {
+			System.out.print("Title: ");
+		    title = _scanner.nextLine().trim();
+			correctInput = MovieDatabaseInputValidation.sanitizeInput(title);
+		}
 		int reviewScore = getNumberInput(_scanner, 1, 5, "Review score (1 - 5): ");
 
-		try {
-			_fileWriter = new FileWriter(file, true);
-		} catch (IOException e) {
-			System.out.println("Error finding the file");
-			e.printStackTrace();
-		}
-
-		try {
-			_fileWriter.write(title + "," + reviewScore + "\n");
-		} catch (IOException e) {
-			System.out.println("Error writing to the file");
-			e.printStackTrace();
-		}
-
-		// Closing the filewriter to avoid possible issues with open writer and reader at the same time
-		try {
-			_fileWriter.close();
-		} catch (IOException e) {
-			System.out.println("Error closing the filweriter");
-			e.printStackTrace();
-		}
+		_fileHandler.addMovie(title, reviewScore); // call on filehandler to add the movie to the database
 	}	
 	/**
 	 * Return the main menu text.
